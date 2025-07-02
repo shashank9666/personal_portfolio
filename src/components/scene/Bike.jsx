@@ -1,12 +1,32 @@
-import { useGLTF } from '@react-three/drei';
-
+import { useGLTF } from "@react-three/drei";
+import { useFrame } from "@react-three/fiber";
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
 
 const Bike = (props) => {
-  const { scene } = useGLTF('/models/2022_yamaha_r1.glb');
+  const group = useRef();
+  const { scene, animations } = useGLTF("/models/2022_yamaha_r1.glb");
+  const mixer = useRef();
 
-  return (
-    <primitive object={scene} {...props} />
-  );
+  useEffect(() => {
+    if (animations && animations.length) {
+      mixer.current = new THREE.AnimationMixer(scene);
+      animations.forEach((clip) => {
+        mixer.current.clipAction(clip).play();
+      });
+    }
+
+    return () => {
+      // Clean up when unmounted
+      if (mixer.current) mixer.current.stopAllAction();
+    };
+  }, [animations, scene]);
+
+  useFrame((state, delta) => {
+    mixer.current?.update(delta);
+  });
+
+  return <primitive ref={group} object={scene} {...props} />;
 };
 
 export default Bike;
