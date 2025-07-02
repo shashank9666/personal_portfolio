@@ -11,18 +11,21 @@ const Bike = (props) => {
   useEffect(() => {
     if (animations && animations.length) {
       mixer.current = new THREE.AnimationMixer(scene);
+
       animations.forEach((clip) => {
-        mixer.current.clipAction(clip).play();
+        const action = mixer.current.clipAction(clip);
+        action.setLoop(THREE.LoopOnce);         // ✅ play once
+        action.clampWhenFinished = true;        // ✅ stop at last frame
+        action.play();                          // ✅ start playing
       });
     }
 
     return () => {
-      // Clean up when unmounted
       if (mixer.current) mixer.current.stopAllAction();
     };
   }, [animations, scene]);
 
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     mixer.current?.update(delta);
   });
 
