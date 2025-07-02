@@ -1,22 +1,109 @@
+import { useRef, useEffect, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+
+// Rotating Torus Knot Component
+const RotatingTorusKnot = () => {
+  const meshRef = useRef(null);
+
+  useFrame(() => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += 0.01;
+      meshRef.current.rotation.y += 0.02;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef}>
+      <torusKnotGeometry args={[1, 0.4, 100, 16]} />
+      <meshNormalMaterial />
+    </mesh>
+  );
+};
+
+// 3D Scene Component
+const Scene3D = () => {
+  return (
+    <>
+      <ambientLight intensity={0.3} />
+      <pointLight position={[5, 5, 5]} intensity={0.8} color="#61DAFB" />
+      <pointLight position={[-5, 3, -5]} intensity={0.5} color="#F04964" />
+      <RotatingTorusKnot />
+    </>
+  );
+};
+
 const About = () => {
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const dotsContainerRef = useRef(null);
+  const visualSectionRef = useRef(null);
+  const techStackRefs = useRef([]);
+  const contentSectionRef = useRef(null);
+
+  // Initialize animations
+  useEffect(() => {
+    // Simple fade-in animations without GSAP
+    const animateElement = (element, delay = 0) => {
+      if (!element) return;
+      
+      element.style.opacity = '0';
+      element.style.transform = 'translateY(30px)';
+      element.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      
+      setTimeout(() => {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+      }, delay);
+    };
+
+    // Animate elements
+    animateElement(sectionRef.current, 100);
+    animateElement(headingRef.current, 200);
+    animateElement(visualSectionRef.current, 400);
+    animateElement(contentSectionRef.current, 600);
+
+    // Animate dots
+    if (dotsContainerRef.current) {
+      const dots = dotsContainerRef.current.querySelectorAll('div');
+      dots.forEach((dot) => {
+        animateElement(dot, Math.random() * 500);
+      });
+    }
+
+    // Tech stack hover effects
+    techStackRefs.current.forEach((tech) => {
+      if (!tech) return;
+      
+      tech.addEventListener('mouseenter', () => {
+        tech.style.transform = 'scale(1.05)';
+        tech.style.opacity = '1';
+      });
+
+      tech.addEventListener('mouseleave', () => {
+        tech.style.transform = 'scale(1)';
+        tech.style.opacity = '0.8';
+      });
+    });
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="about"
-      className="relative py-28 w-full overflow-hidden"
-      style={{ background: "var(--bg)", color: "var(--text)" }}
+      className="relative py-28 w-full overflow-hidden bg-gray-900 text-white"
     >
       {/* Subtle Animated Dots */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
+      <div ref={dotsContainerRef} className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full"
+            className="absolute rounded-full bg-white"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               width: `${Math.random() * 8 + 2}px`,
               height: `${Math.random() * 8 + 2}px`,
-              backgroundColor: "var(--text)",
               opacity: 0.1,
               animation: `float-slow ${Math.random() * 8 + 6}s infinite`,
               animationDelay: `${Math.random() * 4}s`,
@@ -27,7 +114,7 @@ const About = () => {
 
       <div className="relative w-full px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-20">
+        <div ref={headingRef} className="text-center mb-20">
           <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 tracking-tight">About Me</h2>
           <div className="w-32 h-1 mx-auto mb-6 opacity-60 bg-current"></div>
           <p className="mt-6 text-lg sm:text-xl opacity-80 max-w-3xl mx-auto">
@@ -38,24 +125,24 @@ const About = () => {
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* 3D Visual Section */}
-          <div className="lg:col-span-5 flex flex-col">
-            <div className="relative h-[500px] w-full bg-[var(--bg-accent)] rounded-2xl shadow-xl border border-current overflow-hidden transition-all hover:shadow-2xl">
-              {/* Placeholder for 3D scene */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center p-8 opacity-80">
-                <div className="relative w-full h-72 bg-neutral-900 rounded-xl mb-6 flex items-center justify-center border border-current opacity-60">
-                  <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 opacity-20">
-                    {[...Array(9)].map((_, i) => (
-                      <div key={i} className="border border-current opacity-20"></div>
-                    ))}
-                  </div>
-                  <span className="text-lg font-medium">Interactive 3D Scene</span>
-                </div>
-              </div>
+          <div ref={visualSectionRef} className="lg:col-span-5 flex flex-col">
+            <div className="relative h-[500px] w-full bg-gray-800 rounded-2xl shadow-xl border border-gray-600 overflow-hidden transition-all hover:shadow-2xl">
+              {/* R3F Canvas */}
+              <Canvas
+                camera={{ position: [0, 0, 5], fov: 50 }}
+                gl={{ antialias: true, alpha: true }}
+                style={{ background: 'transparent' }}
+              >
+                <Suspense fallback={null}>
+                  <Scene3D />
+                </Suspense>
+              </Canvas>
+              
               {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-current opacity-50 rounded-tl-2xl" />
-              <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-current opacity-50 rounded-tr-2xl" />
-              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-current opacity-50 rounded-bl-2xl" />
-              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-current opacity-50 rounded-br-2xl" />
+              <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-gray-400 opacity-50 rounded-tl-2xl" />
+              <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-gray-400 opacity-50 rounded-tr-2xl" />
+              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-gray-400 opacity-50 rounded-bl-2xl" />
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-gray-400 opacity-50 rounded-br-2xl" />
             </div>
 
             {/* Tech Stack */}
@@ -63,7 +150,8 @@ const About = () => {
               {['MongoDB', 'Express', 'React', 'Node.js', 'Three.js', 'R3F'].map((tech, index) => (
                 <div
                   key={index}
-                  className="bg-[var(--bg-accent)] border border-current rounded-lg py-3 px-4 text-center font-medium opacity-80 hover:opacity-100 hover:shadow-sm transition"
+                  ref={el => techStackRefs.current[index] = el}
+                  className="bg-gray-800 border border-gray-600 rounded-lg py-3 px-4 text-center font-medium opacity-80 transition-all duration-300 cursor-pointer hover:bg-gray-700"
                 >
                   {tech}
                 </div>
@@ -72,7 +160,7 @@ const About = () => {
           </div>
 
           {/* Text Content Section */}
-          <div className="lg:col-span-7">
+          <div ref={contentSectionRef} className="lg:col-span-7">
             {/* Introduction */}
             <div className="mb-12">
               <h3 className="text-2xl sm:text-3xl font-bold mb-6">
@@ -81,7 +169,7 @@ const About = () => {
               <p className="text-lg opacity-80 leading-relaxed mb-6">
                 I architect full-stack solutions that merge the power of MongoDB, Express, React, and Node.js with cutting-edge 3D technologies. My approach blends technical precision with creativity to craft performant and scalable web apps that enhance the user experience.
               </p>
-              <div className="bg-[var(--bg-accent)] border-l-4 border-current opacity-70 p-4 rounded-r-lg mb-6">
+              <div className="bg-gray-800 border-l-4 border-blue-400 opacity-70 p-4 rounded-r-lg mb-6 hover:opacity-100 transition-opacity duration-300">
                 <p className="opacity-80 italic">
                   "The future of web development lies in spatial interfaces that engage users in three-dimensional spaces while preserving the accessibility of traditional web apps."
                 </p>
@@ -90,9 +178,9 @@ const About = () => {
 
             {/* Skills & Expertise */}
             <div className="grid md:grid-cols-2 gap-6 mb-12">
-              <div className="bg-[var(--bg-accent)] p-6 rounded-xl border border-current opacity-80 shadow-sm">
+              <div className="bg-gray-800 p-6 rounded-xl border border-gray-600 opacity-80 shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
                 <h4 className="text-xl font-bold mb-4 flex items-center">
-                  <span className="w-3 h-3 rounded-full bg-current opacity-60 mr-3"></span>
+                  <span className="w-3 h-3 rounded-full bg-blue-400 opacity-60 mr-3"></span>
                   Core Competencies
                 </h4>
                 <ul className="space-y-3 opacity-80">
@@ -105,7 +193,7 @@ const About = () => {
                     'Interactive UI/UX Design',
                     'RESTful API Integration',
                   ].map((skill, index) => (
-                    <li key={index} className="flex items-start">
+                    <li key={index} className="flex items-start hover:text-blue-400 transition-colors duration-200">
                       <span className="opacity-60 mr-2">•</span>
                       <span>{skill}</span>
                     </li>
@@ -113,9 +201,9 @@ const About = () => {
                 </ul>
               </div>
 
-              <div className="bg-[var(--bg-accent)] p-6 rounded-xl border border-current opacity-80 shadow-sm">
+              <div className="bg-gray-800 p-6 rounded-xl border border-gray-600 opacity-80 shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
                 <h4 className="text-xl font-bold mb-4 flex items-center">
-                  <span className="w-3 h-3 rounded-full bg-current opacity-60 mr-3"></span>
+                  <span className="w-3 h-3 rounded-full bg-blue-400 opacity-60 mr-3"></span>
                   Development Principles
                 </h4>
                 <ul className="space-y-3 opacity-80">
@@ -128,7 +216,7 @@ const About = () => {
                     'Accessibility as core requirement',
                     'Continuous learning mindset',
                   ].map((principle, index) => (
-                    <li key={index} className="flex items-start">
+                    <li key={index} className="flex items-start hover:text-blue-400 transition-colors duration-200">
                       <span className="opacity-60 mr-2">•</span>
                       <span>{principle}</span>
                     </li>
@@ -139,6 +227,18 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* Animation Styles */}
+      <style jsx>{`
+        @keyframes float-slow {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-20px) translateX(10px);
+          }
+        }
+      `}</style>
     </section>
   );
 };
