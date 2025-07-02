@@ -1,6 +1,8 @@
 import { useRef, useEffect, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { FaReact, FaNodeJs, FaCss3Alt, FaMagic } from "react-icons/fa";
+import { SiExpress, SiMongodb, SiThreedotjs } from "react-icons/si";
 
 // Rotating Torus Knot Component
 const RotatingTorusKnot = () => {
@@ -38,12 +40,21 @@ const About = () => {
   const headingRef = useRef(null);
   const dotsContainerRef = useRef(null);
   const visualSectionRef = useRef(null);
-  const techStackRefs = useRef([]);
   const contentSectionRef = useRef(null);
+
+  const techStack = [
+    { name: "React", icon: <FaReact className="mr-2 text-blue-500" /> },
+    { name: "Node.js", icon: <FaNodeJs className="mr-2 text-green-600" /> },
+    { name: "Express", icon: <SiExpress className="mr-2" /> },
+    { name: "MongoDB", icon: <SiMongodb className="mr-2 text-green-900" /> },
+    { name: "Tailwind", icon: <FaCss3Alt className="mr-2 text-blue-600" /> },
+    { name: "React Three Fiber + Three.js", icon: <SiThreedotjs className="mr-2" /> },
+    { name: "GSAP", icon: <FaMagic className="mr-2" /> },
+  ];
 
   // Initialize animations
   useEffect(() => {
-    // Simple fade-in animations without GSAP
+    // Simple fade-in animations
     const animateElement = (element, delay = 0) => {
       if (!element) return;
       
@@ -70,40 +81,27 @@ const About = () => {
         animateElement(dot, Math.random() * 500);
       });
     }
-
-    // Tech stack hover effects
-    techStackRefs.current.forEach((tech) => {
-      if (!tech) return;
-      
-      tech.addEventListener('mouseenter', () => {
-        tech.style.transform = 'scale(1.05)';
-        tech.style.opacity = '1';
-      });
-
-      tech.addEventListener('mouseleave', () => {
-        tech.style.transform = 'scale(1)';
-        tech.style.opacity = '0.8';
-      });
-    });
   }, []);
 
   return (
     <section
       ref={sectionRef}
       id="about"
-      className="relative py-28 w-full overflow-hidden bg-gray-900 text-white"
+      className="relative py-28 w-full overflow-hidden"
+      style={{ backgroundColor: "var(--bg)", color: "var(--text)" }}
     >
       {/* Subtle Animated Dots */}
       <div ref={dotsContainerRef} className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
         {[...Array(20)].map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white"
+            className="absolute rounded-full"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
               width: `${Math.random() * 8 + 2}px`,
               height: `${Math.random() * 8 + 2}px`,
+              backgroundColor: "var(--text)",
               opacity: 0.1,
               animation: `float-slow ${Math.random() * 8 + 6}s infinite`,
               animationDelay: `${Math.random() * 4}s`,
@@ -126,7 +124,7 @@ const About = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           {/* 3D Visual Section */}
           <div ref={visualSectionRef} className="lg:col-span-5 flex flex-col">
-            <div className="relative h-[500px] w-full bg-gray-800 rounded-2xl shadow-xl border border-gray-600 overflow-hidden transition-all hover:shadow-2xl">
+            <div className="relative h-[500px] w-full bg-[var(--bg-accent)] rounded-2xl shadow-xl border border-[var(--text)] overflow-hidden transition-all hover:shadow-2xl">
               {/* R3F Canvas */}
               <Canvas
                 camera={{ position: [0, 0, 5], fov: 50 }}
@@ -139,22 +137,22 @@ const About = () => {
               </Canvas>
               
               {/* Corner Accents */}
-              <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-gray-400 opacity-50 rounded-tl-2xl" />
-              <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-gray-400 opacity-50 rounded-tr-2xl" />
-              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-gray-400 opacity-50 rounded-bl-2xl" />
-              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-gray-400 opacity-50 rounded-br-2xl" />
+              <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-[var(--text)] opacity-50 rounded-tl-2xl" />
+              <div className="absolute top-0 right-0 w-12 h-12 border-t-2 border-r-2 border-[var(--text)] opacity-50 rounded-tr-2xl" />
+              <div className="absolute bottom-0 left-0 w-12 h-12 border-b-2 border-l-2 border-[var(--text)] opacity-50 rounded-bl-2xl" />
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-[var(--text)] opacity-50 rounded-br-2xl" />
             </div>
 
             {/* Tech Stack */}
-            <div className="mt-10 grid grid-cols-3 gap-4">
-              {['MongoDB', 'Express', 'React', 'Node.js', 'Three.js', 'R3F'].map((tech, index) => (
-                <div
-                  key={index}
-                  ref={el => techStackRefs.current[index] = el}
-                  className="bg-gray-800 border border-gray-600 rounded-lg py-3 px-4 text-center font-medium opacity-80 transition-all duration-300 cursor-pointer hover:bg-gray-700"
+            <div className="mt-10 flex flex-wrap gap-3 justify-center lg:justify-start opacity-90">
+              {techStack.map((tech) => (
+                <span
+                  key={tech.name}
+                  className="flex items-center rounded-2xl px-4 py-2 border border-[var(--text)] text-sm uppercase font-medium tracking-wide hover:bg-[var(--text)] hover:text-[var(--bg)] transition"
                 >
-                  {tech}
-                </div>
+                  {tech.icon}
+                  {tech.name}
+                </span>
               ))}
             </div>
           </div>
@@ -169,7 +167,7 @@ const About = () => {
               <p className="text-lg opacity-80 leading-relaxed mb-6">
                 I architect full-stack solutions that merge the power of MongoDB, Express, React, and Node.js with cutting-edge 3D technologies. My approach blends technical precision with creativity to craft performant and scalable web apps that enhance the user experience.
               </p>
-              <div className="bg-gray-800 border-l-4 border-blue-400 opacity-70 p-4 rounded-r-lg mb-6 hover:opacity-100 transition-opacity duration-300">
+              <div className="bg-[var(--bg-accent)] border-l-4 border-blue-400 p-4 rounded-r-lg mb-6 hover:opacity-100 transition-opacity duration-300">
                 <p className="opacity-80 italic">
                   "The future of web development lies in spatial interfaces that engage users in three-dimensional spaces while preserving the accessibility of traditional web apps."
                 </p>
@@ -178,7 +176,7 @@ const About = () => {
 
             {/* Skills & Expertise */}
             <div className="grid md:grid-cols-2 gap-6 mb-12">
-              <div className="bg-gray-800 p-6 rounded-xl border border-gray-600 opacity-80 shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-[var(--bg-accent)] p-6 rounded-xl border border-[var(--text)] shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
                 <h4 className="text-xl font-bold mb-4 flex items-center">
                   <span className="w-3 h-3 rounded-full bg-blue-400 opacity-60 mr-3"></span>
                   Core Competencies
@@ -201,7 +199,7 @@ const About = () => {
                 </ul>
               </div>
 
-              <div className="bg-gray-800 p-6 rounded-xl border border-gray-600 opacity-80 shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
+              <div className="bg-[var(--bg-accent)] p-6 rounded-xl border border-[var(--text)] shadow-sm hover:shadow-md hover:opacity-100 transition-all duration-300 hover:-translate-y-1">
                 <h4 className="text-xl font-bold mb-4 flex items-center">
                   <span className="w-3 h-3 rounded-full bg-blue-400 opacity-60 mr-3"></span>
                   Development Principles
