@@ -189,7 +189,7 @@ const Projects = () => {
 
         {/* Coming Soon Section */}
         <div className="mt-16 text-center">
-          <h3 className="text-2xl font-bold mb-4">More Projects Coming Soon</h3>
+          <h3 className="text-2xl font-bold mb-1">More Projects Coming Soon</h3>
           <p className="opacity-80 max-w-2xl mx-auto">
             I'm currently working on new projects that showcase my skills in full-stack development and 3D web experiences.
           </p>
