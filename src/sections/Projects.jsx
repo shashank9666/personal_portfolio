@@ -1,33 +1,91 @@
+import { useRef, useEffect } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
 const Projects = () => {
-  const placeholderProjects = [
-    {
-      id: 1,
-      title: "3D Product Configurator",
-      description: "Interactive 3D product customizer with real-time updates and e-commerce integration.",
-      technologies: ["React", "Three.js", "R3F", "Node.js", "MongoDB"],
-      category: "3D Web Application",
-    },
-    {
-      id: 2,
-      title: "Virtual Showroom",
-      description: "Immersive virtual space showcasing products with realistic lighting and physics simulations.",
-      technologies: ["React", "WebGL", "GSAP", "Express"],
-      category: "3D Experience",
-    },
-    {
-      id: 3,
-      title: "Data Visualization Dashboard",
-      description: "Interactive 3D data visualization tool with real-time analytics and beautiful graphs.",
-      technologies: ["React", "D3.js", "Three.js", "WebSockets"],
-      category: "Data Visualization",
-    },
-  ];
+  const sectionRef = useRef(null);
+  const headingRef = useRef(null);
+  const projectRef = useRef(null);
+  const techRefs = useRef([]);
+
+  // Register GSAP plugin
+  gsap.registerPlugin(ScrollTrigger);
+
+  useEffect(() => {
+    // Section animation
+    gsap.from(sectionRef.current, {
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    });
+
+    // Heading animation
+    gsap.from(headingRef.current, {
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
+      delay: 0.2,
+      ease: "power3.out"
+    });
+
+    // Project card animation
+    gsap.from(projectRef.current, {
+      opacity: 0,
+      y: 50,
+      duration: 0.8,
+      delay: 0.4,
+      scrollTrigger: {
+        trigger: projectRef.current,
+        start: "top 75%",
+        toggleActions: "play none none none"
+      }
+    });
+
+    // Tech tags animation
+    techRefs.current.forEach((tech, index) => {
+      gsap.from(tech, {
+        opacity: 0,
+        x: -20,
+        duration: 0.5,
+        delay: 0.6 + (index * 0.1),
+        scrollTrigger: {
+          trigger: tech,
+          start: "top 90%",
+          toggleActions: "play none none none"
+        }
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  const featuredProject = {
+    title: "Medicinal Plant Identification System",
+    description: "A deep learning application that identifies medicinal plants from images using Convolutional Neural Networks (CNN). Developed a Flask-based web interface with Bootstrap for user-friendly interaction. The system helps in recognizing various medicinal herbs with high accuracy, supporting conservation efforts and traditional medicine practices.",
+    technologies: ["Python", "TensorFlow/Keras", "Flask", "Bootstrap", "CNN", "Image Processing"],
+    features: [
+      "Custom-trained CNN model with 94% accuracy",
+      "Responsive web interface for easy upload and identification",
+      "Detailed plant information display",
+      "Admin panel for model retraining",
+      "Scalable backend architecture"
+    ],
+    githubLink: "https://github.com/yourusername/medicinal-plant-id",
+    demoLink: "#"
+  };
 
   return (
     <section
+      ref={sectionRef}
       id="projects"
-      className="relative w-full py-28 overflow-hidden"
-      style={{ background: "var(--bg)", color: "var(--text)" }}
+      className="relative w-full py-28 overflow-hidden bg-[var(--bg)] text-[var(--text)]"
     >
       {/* Subtle Floating Dots */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -51,81 +109,116 @@ const Projects = () => {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">Featured Projects</h2>
-          <div className="w-24 h-1 mx-auto mb-6 opacity-60 bg-current"></div>
+        <div ref={headingRef} className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">Featured Project</h2>
+          <div className="w-24 h-1 mx-auto mb-6 opacity-60 bg-[var(--text)]"></div>
           <p className="mt-2 text-lg sm:text-xl opacity-80 max-w-2xl mx-auto">
-            Showcasing immersive, 3D-driven web experiences built with the MERN stack and WebGL.
+            Highlighting my work in AI-powered plant identification systems
           </p>
         </div>
 
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {["All", "3D Web Application", "3D Experience", "Data Visualization"].map((category) => (
-            <button
-              key={category}
-              className="px-4 py-2 border border-current rounded-full text-sm font-medium opacity-80 hover:opacity-100 transition"
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+        {/* Single Project Showcase */}
+        <div 
+          ref={projectRef}
+          className="bg-[var(--bg-accent)] border border-[var(--text)] rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl"
+        >
+          {/* Project Header */}
+          <div className="p-8 border-b border-[var(--text)]">
+            <h3 className="text-2xl font-bold mb-2">{featuredProject.title}</h3>
+            <p className="opacity-80 text-lg leading-relaxed">{featuredProject.description}</p>
+          </div>
 
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {placeholderProjects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-[var(--bg-accent)] border border-current rounded-2xl overflow-hidden shadow-lg transform hover:-translate-y-2 transition duration-500 hover:shadow-2xl"
-            >
-              {/* Placeholder Image */}
-              <div className="relative h-48 bg-[var(--bg)] border-b border-current flex items-center justify-center opacity-80">
-                <div className="text-center text-sm font-medium">{project.category}</div>
-              </div>
+          {/* Project Details */}
+          <div className="grid md:grid-cols-2 gap-8 p-8">
+            {/* Left Column - Features */}
+            <div>
+              <h4 className="text-xl font-semibold mb-4 flex items-center">
+                <span className="w-3 h-3 rounded-full bg-blue-500 mr-3"></span>
+                Key Features
+              </h4>
+              <ul className="space-y-3">
+                {featuredProject.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <span className="text-blue-500 mr-2">•</span>
+                    <span className="opacity-90">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                <p className="opacity-80 mb-4 text-sm leading-relaxed">{project.description}</p>
-
-                {/* Tech */}
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {project.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 border border-current rounded-full text-xs opacity-70 hover:opacity-100 transition"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3">
-                  <button className="flex-1 py-2 border border-current rounded-lg text-sm font-medium hover:bg-current hover:text-[var(--bg)] transition">
-                    View Details
-                  </button>
-                  <button className="w-10 h-10 border border-current rounded-lg flex items-center justify-center hover:bg-current hover:text-[var(--bg)] transition">
-                    {/* Link Icon */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </div>
+            {/* Right Column - Technologies */}
+            <div>
+              <h4 className="text-xl font-semibold mb-4 flex items-center">
+                <span className="w-3 h-3 rounded-full bg-blue-500 mr-3"></span>
+                Technologies Used
+              </h4>
+              <div className="flex flex-wrap gap-3">
+                {featuredProject.technologies.map((tech, index) => (
+                  <span
+                    key={tech}
+                    ref={el => techRefs.current[index] = el}
+                    className="px-4 py-2 border border-[var(--text)] rounded-full text-sm font-medium opacity-80 hover:opacity-100 hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
+                  >
+                    {tech}
+                  </span>
+                ))}
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Project Footer with CTA */}
+          <div className="p-6 border-t border-[var(--text)] bg-[var(--bg-accent)]">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href={featuredProject.githubLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 border border-[var(--text)] rounded-lg font-medium text-center hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
+              >
+                View Code
+              </a>
+              <a
+                href={featuredProject.demoLink}
+                className="px-6 py-3 border border-[var(--text)] rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Live Demo
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Coming Soon Section */}
+        <div className="mt-16 text-center">
+          <h3 className="text-2xl font-bold mb-4">More Projects Coming Soon</h3>
+          <p className="opacity-80 max-w-2xl mx-auto">
+            I'm currently working on new projects that showcase my skills in full-stack development and 3D web experiences.
+          </p>
         </div>
       </div>
+
+      {/* Animation Styles */}
+      <style jsx>{`
+        @keyframes float-slow {
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          50% {
+            transform: translateY(-20px) translateX(10px);
+          }
+        }
+      `}</style>
     </section>
   );
 };
