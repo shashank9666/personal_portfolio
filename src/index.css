@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+html {
+  height: 100%;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
+}
+body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --nav-bg: rgba(255, 255, 255, 0.75);
+  --nav-text: #000000;
+  --border-color: #e5e7eb;
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --text: #ffffff;
+  --nav-bg: rgba(0, 0, 0, 0.75);
+  --nav-text: #ffffff;
+  --border-color: #333333;
+}
+
