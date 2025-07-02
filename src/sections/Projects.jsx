@@ -2,64 +2,71 @@ import { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+// Register GSAP plugin
+gsap.registerPlugin(ScrollTrigger);
+
 const Projects = () => {
   const sectionRef = useRef(null);
   const headingRef = useRef(null);
   const projectRef = useRef(null);
   const techRefs = useRef([]);
 
-  // Register GSAP plugin
-  gsap.registerPlugin(ScrollTrigger);
-
   useEffect(() => {
-    // Section animation
-    gsap.from(sectionRef.current, {
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: "top 80%",
-        toggleActions: "play none none none"
-      }
-    });
-
-    // Heading animation
-    gsap.from(headingRef.current, {
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      delay: 0.2,
-      ease: "power3.out"
-    });
-
-    // Project card animation
-    gsap.from(projectRef.current, {
-      opacity: 0,
-      y: 50,
-      duration: 0.8,
-      delay: 0.4,
-      scrollTrigger: {
-        trigger: projectRef.current,
-        start: "top 75%",
-        toggleActions: "play none none none"
-      }
-    });
-
-    // Tech tags animation
-    techRefs.current.forEach((tech, index) => {
-      gsap.from(tech, {
+    // Animation setup
+    const setupAnimations = () => {
+      // Section animation
+      gsap.from(sectionRef.current, {
         opacity: 0,
-        x: -20,
-        duration: 0.5,
-        delay: 0.6 + (index * 0.1),
+        y: 50,
+        duration: 1,
         scrollTrigger: {
-          trigger: tech,
-          start: "top 90%",
+          trigger: sectionRef.current,
+          start: "top 80%",
           toggleActions: "play none none none"
         }
       });
-    });
+
+      // Heading animation
+      gsap.from(headingRef.current, {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        delay: 0.2,
+        ease: "power3.out"
+      });
+
+      // Project card animation
+      gsap.from(projectRef.current, {
+        opacity: 0,
+        y: 50,
+        duration: 0.8,
+        delay: 0.4,
+        scrollTrigger: {
+          trigger: projectRef.current,
+          start: "top 75%",
+          toggleActions: "play none none none"
+        }
+      });
+
+      // Tech tags animation
+      techRefs.current.forEach((tech, index) => {
+        if (tech) {
+          gsap.from(tech, {
+            opacity: 0,
+            x: -20,
+            duration: 0.5,
+            delay: 0.6 + (index * 0.1),
+            scrollTrigger: {
+              trigger: tech,
+              start: "top 90%",
+              toggleActions: "play none none none"
+            }
+          });
+        }
+      });
+    };
+
+    setupAnimations();
 
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -85,7 +92,11 @@ const Projects = () => {
     <section
       ref={sectionRef}
       id="projects"
-      className="relative w-full py-28 overflow-hidden bg-[var(--bg)] text-[var(--text)]"
+      className="relative w-full py-28 overflow-hidden"
+      style={{ 
+        backgroundColor: "var(--bg)", 
+        color: "var(--text)" 
+      }}
     >
       {/* Subtle Floating Dots */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -111,7 +122,7 @@ const Projects = () => {
         {/* Header */}
         <div ref={headingRef} className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-extrabold mb-4 tracking-tight">Featured Project</h2>
-          <div className="w-24 h-1 mx-auto mb-6 opacity-60 bg-[var(--text)]"></div>
+          <div className="w-24 h-1 mx-auto mb-6 opacity-60" style={{ backgroundColor: "var(--text)" }}></div>
           <p className="mt-2 text-lg sm:text-xl opacity-80 max-w-2xl mx-auto">
             Highlighting my work in AI-powered plant identification systems
           </p>
@@ -120,10 +131,14 @@ const Projects = () => {
         {/* Single Project Showcase */}
         <div 
           ref={projectRef}
-          className="bg-[var(--bg-accent)] border border-[var(--text)] rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl"
+          className="rounded-2xl overflow-hidden shadow-xl transition-all duration-300 hover:shadow-2xl"
+          style={{
+            backgroundColor: "var(--bg-accent)",
+            border: "1px solid var(--text)"
+          }}
         >
           {/* Project Header */}
-          <div className="p-8 border-b border-[var(--text)]">
+          <div className="p-8" style={{ borderBottom: "1px solid var(--text)" }}>
             <h3 className="text-2xl font-bold mb-2">{featuredProject.title}</h3>
             <p className="opacity-80 text-lg leading-relaxed">{featuredProject.description}</p>
           </div>
@@ -157,44 +172,17 @@ const Projects = () => {
                   <span
                     key={tech}
                     ref={el => techRefs.current[index] = el}
-                    className="px-4 py-2 border border-[var(--text)] rounded-full text-sm font-medium opacity-80 hover:opacity-100 hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
+                    className="px-4 py-2 rounded-full text-sm font-medium opacity-80 hover:opacity-100 transition-colors duration-200"
+                    style={{
+                      border: "1px solid var(--text)",
+                      backgroundColor: "transparent",
+                      color: "var(--text)"
+                    }}
                   >
                     {tech}
                   </span>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Project Footer with CTA */}
-          <div className="p-6 border-t border-[var(--text)] bg-[var(--bg-accent)]">
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a
-                href={featuredProject.githubLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-6 py-3 border border-[var(--text)] rounded-lg font-medium text-center hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
-              >
-                View Code
-              </a>
-              <a
-                href={featuredProject.demoLink}
-                className="px-6 py-3 border border-[var(--text)] rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-[var(--text)] hover:text-[var(--bg)] transition-colors duration-200"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Live Demo
-              </a>
             </div>
           </div>
         </div>
@@ -209,7 +197,7 @@ const Projects = () => {
       </div>
 
       {/* Animation Styles */}
-      <style jsx>{`
+      <style>{`
         @keyframes float-slow {
           0%, 100% {
             transform: translateY(0) translateX(0);
