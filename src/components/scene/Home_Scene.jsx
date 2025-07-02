@@ -3,16 +3,23 @@ import { OrbitControls, Environment, PerformanceMonitor } from "@react-three/dre
 import { Suspense, useState, useEffect } from "react";
 import Bike from "./Bike";
 import Avatar from "./Avatar";
-import * as THREE from 'three';
+import * as THREE from "three";
+import { preloadVRMWithAnimation } from "../../utils/preloadVRMWithAnimation"; // 👈 adjust path as needed
 
 const Home_Scene = () => {
   const [dpr, setDpr] = useState(1.5);
   const [perfSucks, degrade] = useState(false);
   const [mounted, setMounted] = useState(false);
 
-  // Fix for animation getting stuck
+  const modelUrl = "/models/Shashank.vrm";
+  const animationUrl = "/animations/VRMA_05.vrma";
+
   useEffect(() => {
     setMounted(true);
+
+    // Preload VRM + animation
+    preloadVRMWithAnimation(modelUrl, animationUrl);
+
     return () => setMounted(false);
   }, []);
 
@@ -26,7 +33,7 @@ const Home_Scene = () => {
         far: 100,
       }}
       dpr={dpr}
-      frameloop={mounted ? "always" : "demand"} // Fix for animation stuck
+      frameloop={mounted ? "always" : "demand"}
       gl={{
         antialias: true,
         powerPreference: "high-performance",
@@ -56,9 +63,8 @@ const Home_Scene = () => {
           frames={perfSucks ? 1 : Infinity}
         />
 
-        {/* Optimized Lighting */}
+        {/* Lighting */}
         <ambientLight intensity={0.25} color="#f5f5ff" />
-        
         <directionalLight
           position={[3, 5, 2]}
           intensity={1}
@@ -70,32 +76,26 @@ const Home_Scene = () => {
           shadow-bias={-0.0001}
           shadow-normalBias={0.05}
         />
-
         <directionalLight position={[-3, 3, 1]} intensity={0.6} color="#e6f7ff" />
         <directionalLight position={[0, 2, -3]} intensity={0.8} color="#fff1e6" />
-        
         <hemisphereLight groundColor="#e0f2fe" intensity={0.3} />
 
-        {/* Models with position fixes */}
-        <Suspense fallback={null}>
-          <Avatar
-            modelUrl="/models/Shashank.vrm"
-            animationUrl="/animations/VRMA_05.vrma"
-            position={[0, -0.5, 0]} // Adjusted Y position
-            scale={[1, 1, 1]}
-          />
-        </Suspense>
+        {/* Models */}
+        <Avatar
+          modelUrl={modelUrl}
+          animationUrl={animationUrl}
+          position={[0, -0.5, 0]}
+          scale={[1, 1, 1]}
+        />
 
-        <Suspense fallback={null}>
-          <Bike
-            position={[0, -0.5, -0.5]} // Adjusted Y position
-            rotation={[0, Math.PI / 4 + 1, 0]}
-            castShadow
-            receiveShadow
-          />
-        </Suspense>
+        <Bike
+          position={[0, -0.5, -0.5]}
+          rotation={[0, Math.PI / 4 + 1, 0]}
+          castShadow
+          receiveShadow
+        />
 
-        {/* Optimized Controls */}
+        {/* Camera Controls */}
         <OrbitControls
           enableDamping
           dampingFactor={0.05}
@@ -104,11 +104,10 @@ const Home_Scene = () => {
           maxDistance={8}
           enableZoom={false}
           makeDefault
-          target={[0, 0.5, 0]} // Adjusted target height
+          target={[0, 0.5, 0]}
           onEnd={() => {
-            // Force redraw after controls stop moving
-            const canvas = document.querySelector('canvas');
-            if (canvas) canvas.dispatchEvent(new Event('mousemove'));
+            const canvas = document.querySelector("canvas");
+            if (canvas) canvas.dispatchEvent(new Event("mousemove"));
           }}
         />
       </Suspense>
