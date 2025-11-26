@@ -1,12 +1,13 @@
-
-export const metadata = {
-  title: 'Demo Reel | 3D Portfolio',
-}
-
-export default function ReelPage() {
+export default function Reel() {
   return (
-    <div className="flex text-center bg-violet-black justify-center items-center h-screen w-screen">
-      hello
+    <div
+      className="flex items-center justify-center h-screen w-screen"
+      style={{
+        backgroundColor: "var(--bg-color)",
+        color: "var(--text-color)",
+      }}
+    >
+      Reel
     </div>
-  )
+  );
 }
