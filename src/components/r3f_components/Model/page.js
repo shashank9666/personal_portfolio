@@ -20,4 +20,4 @@ export function Model(props) {
   return <primitive object={scene} {...props} />;
 }
 
-useGLTF.preload("/model.glb");
+useGLTF.preload("/3d_models/Idle.glb");

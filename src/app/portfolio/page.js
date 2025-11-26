@@ -74,6 +74,7 @@ export default function PortfolioHome() {
       <button
         onClick={scrollToTop}
         aria-label="Scroll to top"
+        className="mb-16"
         style={{
           position: "fixed",
           bottom: "2rem",
@@ -83,8 +84,8 @@ export default function PortfolioHome() {
           fontSize: "1.8rem",
           borderRadius: "50%",
           border: "none",
-          backgroundColor: "var(--bg-color, #333)",
-          color: "var(--text-color, #fff)",
+          backgroundColor: "var(--bg-color)",
+          color: "var(--text-color)",
           cursor: "pointer",
           boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
           opacity: showScroll ? 1 : 0,

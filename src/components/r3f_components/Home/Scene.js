@@ -38,7 +38,7 @@ export default function Scene() {
         <Model scale={1} position={[0, -1.2, 0]} rotation={[0,0.5,0]} />
 
         {/* Controls - Only one instance needed */}
-        <OrbitControls enableZoom={false}  />
+        <OrbitControls enableZoom={false} enablePan={false} enableRotate={false}/>
 
         {/* Postprocessing Stack */}
         <EffectComposer disableNormalPass>

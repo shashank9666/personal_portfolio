@@ -12,13 +12,13 @@ html {
 :root {
   --bg-color-rgb: 255, 255, 255;
   --text-color: #000000;
-  --border-color: rgba(0, 0, 0);
+  --border-color: rgb(0, 0, 0);
   --backdrop-blur: 10px;
 }
 
 [data-theme="dark"] {
   --bg-color-rgb: 0, 0, 0;
   --text-color: #ffffff;
-  --border-color: rgba(255, 255, 255);
+  --border-color: rgb(255, 255, 255);
   --backdrop-blur: 10px;
 }
