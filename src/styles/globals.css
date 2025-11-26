@@ -3,7 +3,6 @@
 body {
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
 }
 html {
   height: 100vh;
@@ -21,4 +20,22 @@ html {
   --text-color: #ffffff;
   --border-color: rgb(255, 255, 255);
   --backdrop-blur: 10px;
+}
+/* ensure each section stacks and contains any absolute children */
+#scroll-container > section {
+  position: relative;      /* contain absolute children */
+  min-height: 100vh;       /* at least viewport height */
+  display: block;          /* ensure block stacking */
+  z-index: 0;              /* baseline stacking */
+}
+
+/* ensure immediate children don't accidentally paint above other sections */
+#scroll-container > section > * {
+  position: relative;      /* default children stay inside the section */
+  z-index: 1;
+}
+
+/* if you need to temporarily debug overlapping */
+#scroll-container > section.debug-outline {
+  outline: 1px solid rgba(255,0,0,0.12);
 }

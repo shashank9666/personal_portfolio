@@ -31,42 +31,42 @@ export default function PortfolioHome() {
     <>
       <main
         id="scroll-container"
-        className="w-screen h-screen overflow-y-scroll scroll-smooth"
+        className="w-screen h-screen overflow-y-scroll overflow-x-hidden scroll-smooth"
         style={{
           backgroundColor: "var(--bg-color)",
           color: "var(--text-color)",
-          marginLeft: "auto", // Adjust if Sidebar occupies fixed space on left
+          marginLeft: "auto",
         }}
       >
-        <section
-          id="home"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <Home />
+        {/* NOTE: each section has a wrapper .section-inner which is relative & full-size */}
+        <section id="home" className="min-h-screen">
+          <div className="section-inner w-full h-full relative">
+            <Home />
+          </div>
         </section>
-        <section
-          id="about"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <About />
+
+        <section id="about" className="min-h-screen">
+          <div className="section-inner w-full h-full relative">
+            <About />
+          </div>
         </section>
-        <section
-          id="projects"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <Projects />
+
+        <section id="projects" className="min-h-screen">
+          <div className="section-inner w-full h-full relative">
+            <Projects />
+          </div>
         </section>
-        <section
-          id="reel"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <Reel />
+
+        <section id="reel" className="min-h-screen">
+          <div className="section-inner w-full h-full relative">
+            <Reel />
+          </div>
         </section>
-        <section
-          id="contact"
-          className="min-h-screen flex items-center justify-center"
-        >
-          <Contact />
+
+        <section id="contact" className="min-h-screen">
+          <div className="section-inner w-full h-full relative">
+            <Contact />
+          </div>
         </section>
       </main>
 
