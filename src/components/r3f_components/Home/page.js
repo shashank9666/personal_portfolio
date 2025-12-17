@@ -8,7 +8,7 @@ const DynamicScene = dynamic(() => import('../../r3f_components/Home/Scene'), {
 
 export default function Home() {
   return (
-    <div className="h-screen">
+    <div>
       <DynamicScene />
     </div>
   );

@@ -7,37 +7,42 @@ import { Model } from "../Model/page";
 import { Suspense, useState } from "react";
 
 export default function Scene() {
-  // lazy initializer: runs during first render only (SSR-safe)
   const [isTouch] = useState(() => {
     if (typeof window === "undefined") return false;
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   });
 
   return (
-    // responsive wrapper: mobile shorter, desktop taller
     <div
-      className="w-full h-[60vh] sm:h-[85vh] relative"
+      id="scene"
+      className="h-screen sm:h-[85vh] relative w-screen overflow-hidden"
       style={{
-        // wrapper allowing browser vertical panning
         touchAction: "pan-y",
       }}
     >
       <Canvas
         shadows
-        camera={{ position: [0, 1, 2.5], fov: 50 }}
+        camera={{ 
+          position: [0, 0.8, 2.8], 
+          fov: 50,
+          near: 0.1,
+          far: 1000 
+        }}
         dpr={[1, 1.5, 2]}
-        // canvas obeys wrapper height
         style={{
           width: "100%",
           height: "100%",
           display: "block",
-          // allow the browser to handle vertical pan gestures on the canvas
           touchAction: "pan-y",
         }}
       >
         <Suspense fallback={null}>
           <Environment preset="sunset" />
-          <SoftShadows size={25} samples={17} focus={0} />
+          <SoftShadows 
+            size={25} 
+            samples={17} 
+            focus={0}
+          />
 
           <directionalLight
             position={[10, 10, 5]}
@@ -46,26 +51,51 @@ export default function Scene() {
             shadow-mapSize-width={1024}
             shadow-mapSize-height={1024}
           />
-          <ambientLight intensity={0.5} />
+          
+          <ambientLight 
+            intensity={0.5}
+          />
 
-          <Model scale={1} position={[0, -1.2, 0]} rotation={[0, 0.5, 0]} />
+          <Model 
+            scale={1} 
+            position={[0, -1.4, 0]} 
+            rotation={[0, 0.5, 0]} 
+          />
 
-          {/* Only mount OrbitControls on non-touch devices so it doesn't intercept touch scrolling */}
           {!isTouch && (
-            <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+            <OrbitControls 
+              enableZoom={false} 
+              enablePan={false} 
+              enableRotate={false}
+              maxPolarAngle={Math.PI / 2}
+              minPolarAngle={Math.PI / 4}
+            />
           )}
 
-          <EffectComposer disableNormalPass>
-            <N8AO aoRadius={0.05} intensity={0.7} color="black" halfRes />
+          <EffectComposer 
+            disableNormalPass
+          >
+            <N8AO 
+              aoRadius={0.05} 
+              intensity={0.7} 
+              color="black" 
+              halfRes 
+            />
             <Bloom
               luminanceThreshold={0.4}
               luminanceSmoothing={0.7}
               height={200}
-              intensity={0.8}
+              intensity={0}
             />
           </EffectComposer>
         </Suspense>
       </Canvas>
+
+      <style jsx>{`
+        #scene {
+          background: rgb(var(--bg-color-rgb));
+        }
+      `}</style>
     </div>
   );
 }
