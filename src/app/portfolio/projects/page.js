@@ -2,7 +2,7 @@ export default function Projects() {
   const projects = [
     {
       title: "NextBlogger",
-      period: "Aug 2025 – Present",
+      period: "Aug 2025 - Present",
       description: "Full-stack blogging platform with authentication, dark/light mode, dynamic routing, and reusable UI components.",
       achievements: [
         "Reduced page load times by 30% through code splitting, caching, and component reuse.",
@@ -13,7 +13,7 @@ export default function Projects() {
     },
     {
       title: "3D Portfolio Website",
-      period: "Jun 2025 – Present",
+      period: "Jun 2025 - Present",
       description: "Interactive 3D portfolio featuring car and VRM character models, animations, and responsive layouts.",
       achievements: [
         "Increased user engagement by 40% using R3F scenes, GSAP animations, and optimized assets.",
@@ -24,14 +24,14 @@ export default function Projects() {
     },
     {
       title: "Medicinal Plants Identifier",
-      period: "Jan 2023 – Jun 2023",
+      period: "Jan 2023 - Jun 2023",
       description: "Flask web app to classify Indian medicinal plant leaves using a CNN with 90% accuracy.",
       achievements: [
         "Built an image upload and prediction pipeline; processed 500+ plant images with real-time feedback.",
         "The plant information was dynamically extracted, improving usability and learning by 35%."
       ],
       tech: "Flask, Python, CNN, HTML/CSS/JS",
-      link: "Repository"
+      link: "Live Demo"
     }
   ];
 

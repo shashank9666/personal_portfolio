@@ -1,13 +1,73 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useGLTF, useAnimations, Billboard, Text } from "@react-three/drei";
-import * as THREE from "three";
+import React, { useEffect, useMemo, Suspense, useState } from "react";
+import { useGLTF, useAnimations, Billboard, Text, Html } from "@react-three/drei";
 
-export function Model(props) {
+function ModelLoader() {
+  return (
+    <Html center>
+      <div
+        style={{
+          position: "relative",
+          padding: "22px 28px",
+          borderRadius: "18px",
+          background: "rgba(0,0,0,0.55)",
+          backdropFilter: "blur(10px)",
+          color: "#fff",
+          fontSize: "14px",
+          fontWeight: 600,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          boxShadow: "0 0 30px rgba(255,255,255,0.15)",
+        }}
+      >
+        {/* Pulsing Ring */}
+        <span
+          style={{
+            width: "12px",
+            height: "12px",
+            borderRadius: "50%",
+            border: "2px solid rgba(255,255,255,0.7)",
+            animation: "pulse 1.4s ease-in-out infinite",
+          }}
+        />
+
+        {/* Text */}
+        <span>Loading</span>
+
+        {/* Dots */}
+        <span className="dots">...</span>
+
+        <style>{`
+          @keyframes pulse {
+            0% { transform: scale(0.6); opacity: 0.3; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.6); opacity: 0.3; }
+          }
+
+          .dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+          }
+
+          @keyframes dots {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+          }
+        `}</style>
+      </div>
+    </Html>
+  );
+}
+
+function ModelContent(props) {
   const { scene, animations } = useGLTF("/3d_models/Idle.glb");
   const { actions, names } = useAnimations(animations, scene);
-  const [textColor, setTextColor] = useState("#000000");
-  const [accentColor, setAccentColor] = useState("#3B82F6");
 
   useEffect(() => {
     if (names.length > 0) {
@@ -16,208 +76,79 @@ export function Model(props) {
     return () => actions[names[0]]?.fadeOut(0.5).stop();
   }, [actions, names]);
 
-  useEffect(() => {
-    const isDarkTheme =
-      document.documentElement.getAttribute("data-theme") === "dark" ||
-      document.documentElement.classList.contains("dark");
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTextColor(isDarkTheme ? "#ffffff" : "#000000");
-    setAccentColor(isDarkTheme ? "#60A5FA" : "#3B82F6");
+const [textColor, setTextColor] = useState("#000000");
 
-    const observer = new MutationObserver(() => {
-      const isDark =
-        document.documentElement.getAttribute("data-theme") === "dark" ||
-        document.documentElement.classList.contains("dark");
-      setTextColor(isDark ? "#ffffff" : "#000000");
-      setAccentColor(isDark ? "#60A5FA" : "#3B82F6");
-    });
+useEffect(() => {
+  const updateColor = () => {
+    const isDark =
+      document.documentElement.getAttribute("data-theme") === "dark";
+    setTextColor(isDark ? "#ffffff" : "#000000");
+  };
 
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["class", "data-theme"],
-    });
+  updateColor(); // initial
 
-    return () => observer.disconnect();
-  }, []);
+  const observer = new MutationObserver(updateColor);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+
+  return () => observer.disconnect();
+}, []);
+
 
   return (
     <>
-      {/* Main Name Group */}
-      <group position={[0, -0.5, 0]}>
-        {/* Background Glow Effect */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <mesh position={[0, 1.5, -2]}>
-            <planeGeometry args={[8, 4]} />
-            <meshBasicMaterial
-              color={accentColor}
-              transparent
-              opacity={0.05}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-        </Billboard>
+      <Billboard follow>
+        <Text
+          font="/fonts/Poppins-Bold.ttf"
+          fontSize={1}
+          color={textColor}
+          anchorX="center"
+          anchorY="middle"
+          position={[0, -0.45, -2.5]}
+          letterSpacing={0.08}
+          outlineWidth={0.015}
+          outlineColor={textColor === "#ffffff" ? "#000000" : "#ffffff"}
+          outlineOpacity={0.3}
+        >
+          SHASHANK
+        </Text>
 
-        {/* First Name - Large & Bold */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <Text
-            font="/fonts/Poppins-Bold.ttf"
-            fontSize={0.8}
-            color={textColor}
-            anchorX="center"
-            anchorY="middle"
-            position={[0, 2.2, -1]}
-            letterSpacing={0.05}
-            outlineWidth={0.02}
-            outlineColor={accentColor}
-            outlineOpacity={0.5}
-          >
-            SHASHANK
-          </Text>
-        </Billboard>
+        <Text
+          font="/fonts/Poppins-Bold.ttf"
+          fontSize={1}
+          color={textColor}
+          anchorX="center"
+          anchorY="middle"
+          position={[0, -1.4, -2.5]}
+          letterSpacing={0.08}
+          outlineWidth={0.015}
+          outlineColor={textColor === "#ffffff" ? "#000000" : "#ffffff"}
+          outlineOpacity={0.3}
+        >
+          SHETTY
+        </Text>
+      </Billboard>
 
-        {/* Last Name - Large & Bold with offset */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <Text
-            font="/fonts/Poppins-Bold.ttf"
-            fontSize={0.8}
-            color={textColor}
-            anchorX="center"
-            anchorY="middle"
-            position={[0, 1.2, -1]}
-            letterSpacing={0.05}
-            outlineWidth={0.02}
-            outlineColor={accentColor}
-            outlineOpacity={0.5}
-          >
-            SHETTY
-          </Text>
-        </Billboard>
-
-        {/* Divider Line */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <mesh position={[0, 0.6, -0.8]}>
-            <boxGeometry args={[3.5, 0.02, 0.01]} />
-            <meshBasicMaterial color={accentColor} />
-          </mesh>
-        </Billboard>
-
-        {/* Title - Stylish & Modern */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <Text
-            font="/fonts/Poppins-SemiBold.ttf"
-            fontSize={0.25}
-            color={accentColor}
-            anchorX="center"
-            anchorY="middle"
-            position={[0, 0.2, -1]}
-            letterSpacing={0.1}
-          >
-            FULL-STACK DEVELOPER
-          </Text>
-        </Billboard>
-
-        {/* Tech Stack Badges */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <group position={[0, -0.6, -1]}>
-            {/* React Badge */}
-            <mesh position={[-1.5, 0, 0]}>
-              <boxGeometry args={[0.8, 0.3, 0.05]} />
-              <meshBasicMaterial color="#61DAFB" />
-              <Text
-                font="/fonts/Poppins-Regular.ttf"
-                fontSize={0.1}
-                color="#000000"
-                anchorX="center"
-                anchorY="middle"
-                position={[0, 0, 0.03]}
-              >
-                REACT
-              </Text>
-            </mesh>
-
-            {/* Node Badge */}
-            <mesh position={[-0.5, 0, 0]}>
-              <boxGeometry args={[0.8, 0.3, 0.05]} />
-              <meshBasicMaterial color="#339933" />
-              <Text
-                font="/fonts/Poppins-Regular.ttf"
-                fontSize={0.1}
-                color="#ffffff"
-                anchorX="center"
-                anchorY="middle"
-                position={[0, 0, 0.03]}
-              >
-                NODE
-              </Text>
-            </mesh>
-
-            {/* MongoDB Badge */}
-            <mesh position={[0.5, 0, 0]}>
-              <boxGeometry args={[0.8, 0.3, 0.05]} />
-              <meshBasicMaterial color="#47A248" />
-              <Text
-                font="/fonts/Poppins-Regular.ttf"
-                fontSize={0.1}
-                color="#ffffff"
-                anchorX="center"
-                anchorY="middle"
-                position={[0, 0, 0.03]}
-              >
-                MONGO
-              </Text>
-            </mesh>
-
-            {/* 3D Badge */}
-            <mesh position={[1.5, 0, 0]}>
-              <boxGeometry args={[0.8, 0.3, 0.05]} />
-              <meshBasicMaterial color="#000000" />
-              <Text
-                font="/fonts/Poppins-Regular.ttf"
-                fontSize={0.1}
-                color="#ffffff"
-                anchorX="center"
-                anchorY="middle"
-                position={[0, 0, 0.03]}
-              >
-                3D WEB
-              </Text>
-            </mesh>
-          </group>
-        </Billboard>
-
-        {/* Location & Contact */}
-        <Billboard follow={true} lockX={false} lockY={false} lockZ={false}>
-          <group position={[0, -1.3, -1]}>
-            <Text
-              font="/fonts/Poppins-Regular.ttf"
-              fontSize={0.12}
-              color={textColor}
-              anchorX="center"
-              anchorY="middle"
-              position={[0, 0.15, 0]}
-              opacity={0.8}
-            >
-              HYDERABAD, INDIA
-            </Text>
-            <Text
-              font="/fonts/Poppins-Regular.ttf"
-              fontSize={0.1}
-              color={textColor}
-              anchorX="center"
-              anchorY="middle"
-              position={[0, -0.1, 0]}
-              opacity={0.6}
-            >
-              shettyshashank2002@gmail.com
-            </Text>
-          </group>
-        </Billboard>
-      </group>
-
-      {/* The 3D Model */}
       <primitive object={scene} {...props} />
     </>
   );
 }
 
-useGLTF.preload("/3d_models/Idle.glb");
+export function Model(props) {
+  const [showModel, setShowModel] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowModel(true), 1000); // ⏱ 1s minimum loader
+    return () => clearTimeout(timer);
+  }, []);
+
+  return showModel ? (
+    <Suspense fallback={<ModelLoader />}>
+      <ModelContent {...props} />
+    </Suspense>
+  ) : (
+    <ModelLoader />
+  );
+}
